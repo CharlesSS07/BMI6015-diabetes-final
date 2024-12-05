@@ -33,19 +33,40 @@ Classifier model metrics for prediction "never readmitted":
 | Linear Regression | 0.68    | 0.70   |
 | RBM Network       | 0.71    | 0.73   |
 
-// summary of all models and motivations for each one
-
 ## Autoencoder
 
-I trained several autoencoders, and found that autoencoder with lowest-dimensional latent space (n=16, rather than n=64) had best clustering in PCA & T-SNE. This is the autoencoder I refer to. This autoencoder had a total of 4 layers (2 encoder, 2 decoder). With an input space of of size 2831, and latent space of size 16, the autoencodeer techincally had a compression ratio of 16/2831 --> 00.56%. However, considering the fact that the input space is derived from a <50-attribute space, this is not truly the compression ratio, but is still a decent compression on the input data. Next, I visualized the compression ratios in my latent PCA, and latent T-SNE notebooks in the folder "models/ae". Autoencoder models are saved, and tracked with the wandb package.
+The motivation for training an autoencoder on this data is to not only compress the 2831-dimensional one-hot-encoded input space into a lower-dimensional space (improves speed of applying PCA and T-SNE), but to also create a space which is better-suited for applying PCA and T-SNE by leveraging the non-linear transformation of the autoencoder encoder. Autoencoder are also lossy compressor, but tend to denoise, so are not a terrible way to encode data. I trained several autoencoders, and found that autoencoder with lowest-dimensional latent space (n=16, rather than n=64) had best clustering in PCA & T-SNE. This is the autoencoder I refer to. This autoencoder had a total of 4 layers (2 encoder, 2 decoder). With an input space of of size 2831, and latent space of size 16. This autoencodeer techincally had a compression ratio of 16/2831 --> 00.56%. However, considering the fact that the 2831-dimensional input space is derived from a <50-attribute space, this is not truly the compression ratio, but is still a decent compression on the input data. This revealed that the data was highly compressible. Next, I visualized the compressed latent space in my latent PCA, and latent T-SNE notebooks in the folder "models/ae". Autoencoder models are saved, and tracked with the wandb package.
 
 ## PCA on AE latent representations
 
-![PCA](assets/latent_pca.png)
+The motivation for applying PCA to the autoencoder latent space it to see if any clusters appear, and if these clusters are of specific label groups.
 
+![PCA](assets/latent_pca.png "PCA of AE latent Space")
 
+Colors represent different label classes. PCA of the latent space revealed no stratification or clustering.
 
 ## T-SNE on AE latent representations
+
+The motivation for applying T-SNE, after applying PCA to the same latent space, is many fold: T-SNE is better at visualizing complex manifolds than PCA as it is non-linear and tries to preserve the distances of data points more. As a result, T-SNE is more likley to display clusters than PCA.
+
+After applying T-SNE to every latent representation of every datapoint in my training set, I visualized this space by seperating the points into three plots in a triptic fasion, as seen below. The left most plot is for patients who were readmitted within 30 days. The middle plot is for patients readmitted after 30 days, and the rightmost plot is for patients who were never readmitted. Colors represent different attributes in each plot.
+
+The story these plots tell is three fold; patients in this space are heavily clustered primarily by gender, and also by race, while different types of diabetics showing up in the number of lab prodedures, and the presense of the max glu serum test (a test only given to those with diabetes, or pregnant women to monitor their glucose levels). Interestingly, there is a striking corellation between the type of insurance someone has, the number of lab tests they have done, and the max glucose serum test.
+
+![T-SNE-race](assets/latent_tsne_race.png "T-SNE of AE latent Space colored by race")
+
+
+![T-SNE-race](assets/latent_tsne_gender.png "T-SNE of AE latent Space colored by gender")
+
+
+![T-SNE-race](assets/latent_tsne_num_lab_procedures.png "T-SNE of AE latent Space colored by number of lab procedures a patient has had")
+
+
+![T-SNE-race](assets/latent_tsne_payer_code.png "T-SNE of AE latent Space colored by payer code")
+
+
+![T-SNE-race](assets/latent_tsne_max_flu_serum.png "T-SNE of AE latent Space colored by presence of max glu serum test")
+
 
 ## SVM
 
@@ -59,6 +80,6 @@ I trained several autoencoders, and found that autoencoder with lowest-dimension
 
 // VAE instaed of AE
 // Optuna
-
+// data is skewed by patients who died: if you die you cannot be readmitted
 
 # Environment Managment
