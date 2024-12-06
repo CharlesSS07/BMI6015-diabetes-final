@@ -70,25 +70,25 @@ The story these plots tell is three fold; patients in this space are heavily clu
 
 ## SVM
 
-As a baseline classifier, I trained a Linear SVC. The following is it's porformance on test data. I also experimented with a standerad SVM, but was not impressed by the results and switched to the LinearSVC for improved performance
+As a baseline classifier, I trained a Linear SVC. The following is it's porformance on test data. I also experimented with a standerad SVM, but was not impressed by the results and switched to the LinearSVC for improved performance. When I applied SHAP analysis to this model, I found that some of the most important features were consistently: the drugs acetohexamide and nateglinide, and the feature "payer_code", which corresponds to who paid for the hospital say (insurers like Medicare and Blue Cross Blue Shield, or self pay).
 
 ![svm_roc_pr_curves](assets/rocpr_svm_no.png)
 
 ## Linear Regression
 
-The linear regression is another strong baselien model, which is very interpretable and widley used in the mdeical field. Although the attributes of my dataset are likley not all identically independently distributed samples, I still trained a linear regression model, finding this model to be much faster than the SVM, and superrior in performance.
+The linear regression is another strong baselien model, which is very interpretable and widley used in the mdeical field. Although the attributes of my dataset are likley not all identically independently distributed samples, I still trained a linear regression model, finding this model to be much faster than the SVM, and superrior in performance. When I applied SHAP analysis to this model, I found that the drugs metformin-pioglitazone, metformin-rosiglitazone, and glimepiride-pioglitazone where the most predictive features.
 
-![linear_regression_roc_pr_curves](assets/rocpr_svm_no.png)
+![linear_regression_roc_pr_curves](assets/rocpr_linear_regression_no.png)
 
 ## RBFNN
 
-A Radial Basis Function (RBF) Neural Network is good at capturing nonlinear relationships which the linear regression, or vanilla SVM would not have picked up on.
+A Radial Basis Function (RBF) Neural Network is good at capturing nonlinear relationships which the linear regression, or vanilla SVM would not have picked up on. When I applied SHAP analysis to this model, I found that some of the most important features were pay_code (who insures the patient, or paid for the visit), and the drugs acetohexamide and nateglinide, making this model very consistent with the SVM.
 
 ![rbfnn_roc_pr_curve](assets/rocpr_rbfnn_no.png)
 
 ## Bonus Model: Latent Linear Regression
 
-Because I had trained an Autoencoder, I had denoised latent representation of my data, and decided to see if training on this would improve performance. I found that training a linear regression model on the latent representations only reduced performance, and stopped persuing this model.
+Because I had trained an Autoencoder, I had denoised latent representation of my data, and decided to see if training on this would improve performance. I found that training a linear regression model on the latent representations only reduced performance, and stopped persuing this model. 
 
 ## Improvements
 
@@ -96,7 +96,7 @@ It has been shown that variational autoencoders produce much better clusters in 
 
 As the course staff will realize, I did not use Optuna even though this was part of the assignment (10pts). I believe that I found many reasonably good hyperparameters on my own, but know that I could have improved the SVM and Linear Regression models had I used Optuna.
 
-One issue with my data was in the way patients are labelled. Patients who die (in or outside of the hospital) can never come back to be readmitted to the hospital. This likley caused some of the disbalance in the class labels of my data, and also made predicting if a patient will come back very easy for patients with outpatient status of "deceased".
+One issue with my data was in the way patients are labelled. Patients who die (in or outside of the hospital) can never come back to be readmitted to the hospital. This likley caused some of the disbalance in the class labels of my data, and also made predicting if a patient will come back very easy for patients with outpatient status of "deceased". If I were to continue this project, I would preprocess my data to remove patients who are marked as "deceased" to try to mitigate this issue.
 
 # Environment & Managment
 
@@ -105,7 +105,7 @@ One issue with my data was in the way patients are labelled. Patients who die (i
 1. `conda create -f environment.yaml`
 2. `jupyter lab --port 6006 --no-browser`
 
-# Managment
+## Managment
 
 Do not use `pip install ...` or `conda install ...`!
 
